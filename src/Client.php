@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached;
 
+use Throwable;
 use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
@@ -106,7 +107,7 @@ class Client extends EventEmitter
                 $command = $this->parser->makeCommand($name, $args);
                 $this->connection->write($command);
                 $this->pool->add($request);
-            } catch (WrongCommandException $e) {
+            } catch (Throwable $e) {
                 $request->reject($e);
             }
         }
@@ -130,7 +131,7 @@ class Client extends EventEmitter
             try {
                 $parsedResponse = $this->parser->parseResponse($request->command(), $response);
                 $request->resolve($parsedResponse);
-            } catch (WrongCommandException $exception) {
+            } catch (Throwable $exception) {
                 $request->reject($exception);
             }
         }
